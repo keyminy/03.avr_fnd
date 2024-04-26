@@ -24,12 +24,19 @@ int main(void)
     while (1) 
     {
 		fnd_display();
-		_delay_ms(1); //1ms마다 fnd_display함수 호출
+		_delay_ms(100); //1ms마다 fnd_display함수 호출
 		ms_count++;
 		if(ms_count == 1000){
 			//1000ms = 1s
 			ms_count = 0;
 			sec_count++; // sec count를 증가시킴
+		}
+		if(get_button(BUTTON1_PIN,BUTTON1)){
+			while(1){
+				if(get_button(BUTTON1_PIN,BUTTON1)){
+					break;
+				}
+			}
 		}
 	}
 }

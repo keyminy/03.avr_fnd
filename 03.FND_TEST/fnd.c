@@ -26,30 +26,30 @@ void fnd_display(void){
 	#else
 	unsigned char fnd_font[] = {~0xc0, ~0xf9, ~0xa4, ~0xb0,~0x99,~0x92,~0x82,~0xd8,~0x80,~0x98,~0x7f};
 	#endif
-	static int digit_position = 0; // 자리수 선택 변수 0~3 : 0,1,2,3
+	static int digit_position = 0; // 자리수 선택  변수 0~3 : 0,1,2,3
 	
 	switch(digit_position){
 		case 0: // 1단위
 		#if 0
 		FND_DIGIT_PORT = 0b10000000; // anode
-		FND_DATA_PORT = fnd_font[sec_count % 10]& fnd_font[10];
+		FND_DATA_PORT = fnd_font[(ms_count%10)]& fnd_font[10];
 		#else
 		FND_DIGIT_PORT = ~0b10000000; // cathode
 		// sec_count % 10 = 0~9까지 빙글빙글
-		FND_DATA_PORT = fnd_font[sec_count % 10] | fnd_font[10];
+		FND_DATA_PORT = fnd_font[(ms_count%10)] | fnd_font[10];
 		#endif
-		//FND_DATA_PORT = fnd_font[sec_count % 10];
+		FND_DATA_PORT = fnd_font[(ms_count%10)];
 		
 		break;
 		case 1: // 10단위
 		#if 0
 		FND_DIGIT_PORT = 0b01000000; // anode
-		FND_DATA_PORT = fnd_font[(sec_count/10)%6]& fnd_font[10]; //초의 10의자리수가 나옴
+		FND_DATA_PORT = fnd_font[(ms_count/100) % 100]& fnd_font[10]; //초의 10의자리수가 나옴
 		#else
 		FND_DIGIT_PORT = ~0b01000000; // cathode
-		FND_DATA_PORT = fnd_font[(sec_count/10)%6]| fnd_font[10]; //초의 10의자리수가 나옴
+		FND_DATA_PORT = fnd_font[(ms_count/100) % 100]| fnd_font[10]; //초의 10의자리수가 나옴
 		#endif
-		//FND_DATA_PORT = fnd_font[(sec_count/10)%6]; //초의 10의자리수가 나옴
+		FND_DATA_PORT = fnd_font[(ms_count/100) % 100]; //초의 10의자리수가 나옴
 		break;
 		case 2: // 100단위
 		#if 0
@@ -59,7 +59,7 @@ void fnd_display(void){
 		FND_DIGIT_PORT = ~0b00100000; // cathode
 		FND_DATA_PORT = fnd_font[(sec_count/60)%10] | fnd_font[10];// 분의 1의자리수가 나옴.
 		#endif
-		//FND_DATA_PORT = fnd_font[(sec_count/60)%10];// 분의 1의자리수가 나옴.
+		FND_DATA_PORT = fnd_font[(sec_count/60)%10];// 분의 1의자리수가 나옴.
 		break;
 		case 3: // 1000단위
 		#if 0
@@ -69,7 +69,7 @@ void fnd_display(void){
 		FND_DIGIT_PORT = ~0b00010000; // cathode
 		FND_DATA_PORT = fnd_font[(sec_count/600)%6]| fnd_font[10];
 		#endif
-		//FND_DATA_PORT = fnd_font[(sec_count/600)%6];
+		FND_DATA_PORT = fnd_font[(sec_count/600)%6];
 		break;
 		default:
 		break;
