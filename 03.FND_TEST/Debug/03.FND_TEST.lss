@@ -3,31 +3,31 @@
 
 Sections:
 Idx Name          Size      VMA       LMA       File off  Algn
-  0 .data         0000000a  00800100  0000018e  00000222  2**0
+  0 .data         0000000c  00800100  0000018e  00000222  2**0
                   CONTENTS, ALLOC, LOAD, DATA
   1 .text         0000018e  00000000  00000000  00000094  2**1
                   CONTENTS, ALLOC, LOAD, READONLY, CODE
-  2 .bss          00000002  0080010a  0080010a  0000022c  2**0
+  2 .bss          00000002  0080010c  0080010c  0000022e  2**0
                   ALLOC
-  3 .comment      00000030  00000000  00000000  0000022c  2**0
+  3 .comment      00000030  00000000  00000000  0000022e  2**0
                   CONTENTS, READONLY
-  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  0000025c  2**2
+  4 .note.gnu.avr.deviceinfo 00000040  00000000  00000000  00000260  2**2
                   CONTENTS, READONLY
-  5 .debug_aranges 00000030  00000000  00000000  0000029c  2**0
+  5 .debug_aranges 00000030  00000000  00000000  000002a0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  6 .debug_info   00000906  00000000  00000000  000002cc  2**0
+  6 .debug_info   00000906  00000000  00000000  000002d0  2**0
                   CONTENTS, READONLY, DEBUGGING
-  7 .debug_abbrev 0000083d  00000000  00000000  00000bd2  2**0
+  7 .debug_abbrev 0000083d  00000000  00000000  00000bd6  2**0
                   CONTENTS, READONLY, DEBUGGING
-  8 .debug_line   0000031a  00000000  00000000  0000140f  2**0
+  8 .debug_line   0000031a  00000000  00000000  00001413  2**0
                   CONTENTS, READONLY, DEBUGGING
-  9 .debug_frame  00000054  00000000  00000000  0000172c  2**2
+  9 .debug_frame  00000054  00000000  00000000  00001730  2**2
                   CONTENTS, READONLY, DEBUGGING
- 10 .debug_str    00000433  00000000  00000000  00001780  2**0
+ 10 .debug_str    00000433  00000000  00000000  00001784  2**0
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_loc    00000047  00000000  00000000  00001bb3  2**0
+ 11 .debug_loc    00000047  00000000  00000000  00001bb7  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_ranges 00000020  00000000  00000000  00001bfa  2**0
+ 12 .debug_ranges 00000020  00000000  00000000  00001bfe  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -123,13 +123,13 @@ Disassembly of section .text:
   a6:	02 c0       	rjmp	.+4      	; 0xac <__do_copy_data+0x14>
   a8:	07 90       	elpm	r0, Z+
   aa:	0d 92       	st	X+, r0
-  ac:	aa 30       	cpi	r26, 0x0A	; 10
+  ac:	ac 30       	cpi	r26, 0x0C	; 12
   ae:	b1 07       	cpc	r27, r17
   b0:	d9 f7       	brne	.-10     	; 0xa8 <__do_copy_data+0x10>
 
 000000b2 <__do_clear_bss>:
   b2:	21 e0       	ldi	r18, 0x01	; 1
-  b4:	aa e0       	ldi	r26, 0x0A	; 10
+  b4:	ac e0       	ldi	r26, 0x0C	; 12
   b6:	b1 e0       	ldi	r27, 0x01	; 1
   b8:	01 c0       	rjmp	.+2      	; 0xbc <.do_clear_bss_start>
 
@@ -137,7 +137,7 @@ Disassembly of section .text:
   ba:	1d 92       	st	X+, r1
 
 000000bc <.do_clear_bss_start>:
-  bc:	ac 30       	cpi	r26, 0x0C	; 12
+  bc:	ae 30       	cpi	r26, 0x0E	; 14
   be:	b2 07       	cpc	r27, r18
   c0:	e1 f7       	brne	.-8      	; 0xba <.do_clear_bss_loop>
   c2:	5a d0       	rcall	.+180    	; 0x178 <main>
@@ -153,18 +153,16 @@ Disassembly of section .text:
 void init_fnd(void){
 	// PortC를 모두 출력(FND 8pin)으로 하는거니까 모두 write모드로 하기
 	FND_DATA_DDR = 0xFF;
-  c8:	8f ef       	ldi	r24, 0xFF	; 255
-  ca:	84 bb       	out	0x14, r24	; 20
+  c8:	9f ef       	ldi	r25, 0xFF	; 255
+  ca:	94 bb       	out	0x14, r25	; 20
 	FND_DIGIT_DDR |= 0xF0;// 4,5,6,7만 출력이니까 거기만 write모드
   cc:	87 b3       	in	r24, 0x17	; 23
   ce:	80 6f       	ori	r24, 0xF0	; 240
   d0:	87 bb       	out	0x17, r24	; 23
 	
-	#if 0 //common anode방식으로
+	#if 1 //common anode방식으로
 		FND_DATA_PORT = ~0x00; // common anode : FND를 all off
-	#else	// common cathode
-		FND_DATA_PORT = 0x00; // PORTC 설정 : FND를 all off
-  d2:	15 ba       	out	0x15, r1	; 21
+  d2:	95 bb       	out	0x15, r25	; 21
   d4:	08 95       	ret
 
 000000d6 <fnd_display>:
@@ -178,19 +176,19 @@ void fnd_display(void){
   d8:	df 93       	push	r29
   da:	cd b7       	in	r28, 0x3d	; 61
   dc:	de b7       	in	r29, 0x3e	; 62
-  de:	2a 97       	sbiw	r28, 0x0a	; 10
+  de:	2b 97       	sbiw	r28, 0x0b	; 11
   e0:	0f b6       	in	r0, 0x3f	; 63
   e2:	f8 94       	cli
   e4:	de bf       	out	0x3e, r29	; 62
   e6:	0f be       	out	0x3f, r0	; 63
   e8:	cd bf       	out	0x3d, r28	; 61
-		unsigned char fnd_font[] = {
-			// 0    1     2     3    4    5    6    7    8    9
-			0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x98
-		};
-	#else
-		unsigned char fnd_font[] = {
-  ea:	8a e0       	ldi	r24, 0x0A	; 10
+	
+	#if 1 // common anode
+		// 0을 찍을려면 g빼고 1로 16진수값 3F입니다, b는 0011_1111(common anode)
+		// common cathode는 1100_0000이고, 16진수로 C0
+									//0    1     2     3    4    5    6    7    8    9
+		unsigned char fnd_font[] = {0xc0, 0xf9, 0xa4, 0xb0,0x99,0x92,0x82,0xd8,0x80,0x98,0x00};
+  ea:	8b e0       	ldi	r24, 0x0B	; 11
   ec:	e0 e0       	ldi	r30, 0x00	; 0
   ee:	f1 e0       	ldi	r31, 0x01	; 1
   f0:	de 01       	movw	r26, r28
@@ -199,14 +197,14 @@ void fnd_display(void){
   f6:	0d 92       	st	X+, r0
   f8:	8a 95       	dec	r24
   fa:	e1 f7       	brne	.-8      	; 0xf4 <fnd_display+0x1e>
-		};		
+	#else
+		unsigned char fnd_font[] = {~0xc0, ~0xf9, ~0xa4, ~0xb0,~0x99,~0x92,~0x82,~0xd8,~0x80,~0x98,~0x00};
 	#endif
-	
-	static int digit_position = 0; // 자리수 선택 변수 0~3 : 0,1,2,3
+		static int digit_position = 0; // 자리수 선택 변수 0~3 : 0,1,2,3
 		
 	switch(digit_position){
-  fc:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <__data_end>
- 100:	90 91 0b 01 	lds	r25, 0x010B	; 0x80010b <__data_end+0x1>
+  fc:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <__data_end>
+ 100:	90 91 0d 01 	lds	r25, 0x010D	; 0x80010d <__data_end+0x1>
  104:	81 30       	cpi	r24, 0x01	; 1
  106:	91 05       	cpc	r25, r1
  108:	79 f0       	breq	.+30     	; 0x128 <fnd_display+0x52>
@@ -221,12 +219,12 @@ void fnd_display(void){
  11a:	81 f0       	breq	.+32     	; 0x13c <fnd_display+0x66>
  11c:	13 c0       	rjmp	.+38     	; 0x144 <fnd_display+0x6e>
 		case 0:
-			#if 0
+			#if 1
 				FND_DIGIT_PORT = 0b10000000; // anode
+ 11e:	80 e8       	ldi	r24, 0x80	; 128
+ 120:	88 bb       	out	0x18, r24	; 24
 			#else 
 				FND_DIGIT_PORT = ~0b10000000; // cathode
- 11e:	8f e7       	ldi	r24, 0x7F	; 127
- 120:	88 bb       	out	0x18, r24	; 24
 			#endif
 				FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
  122:	89 85       	ldd	r24, Y+9	; 0x09
@@ -234,12 +232,12 @@ void fnd_display(void){
 			break;
  126:	0e c0       	rjmp	.+28     	; 0x144 <fnd_display+0x6e>
 		case 1:
-			#if 0
-			FND_DIGIT_PORT = 0b10000000; // anode
-			#else
-			FND_DIGIT_PORT = ~0b10000000; // cathode
- 128:	8f e7       	ldi	r24, 0x7F	; 127
+			#if 1
+			FND_DIGIT_PORT = 0b01000000; // anode
+ 128:	80 e4       	ldi	r24, 0x40	; 64
  12a:	88 bb       	out	0x18, r24	; 24
+			#else
+			FND_DIGIT_PORT = ~0b01000000; // cathode
 			#endif
 			FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
  12c:	89 85       	ldd	r24, Y+9	; 0x09
@@ -247,12 +245,12 @@ void fnd_display(void){
 			break;
  130:	09 c0       	rjmp	.+18     	; 0x144 <fnd_display+0x6e>
 		case 2:
-			#if 0
+			#if 1
 			FND_DIGIT_PORT = 0b00100000; // anode
+ 132:	80 e2       	ldi	r24, 0x20	; 32
+ 134:	88 bb       	out	0x18, r24	; 24
 			#else
 			FND_DIGIT_PORT = ~0b00100000; // cathode
- 132:	8f ed       	ldi	r24, 0xDF	; 223
- 134:	88 bb       	out	0x18, r24	; 24
 			#endif
 			FND_DATA_PORT = fnd_font[8];// 8번 index write = 9을 사용함
  136:	89 85       	ldd	r24, Y+9	; 0x09
@@ -260,12 +258,12 @@ void fnd_display(void){
 			break;
  13a:	04 c0       	rjmp	.+8      	; 0x144 <fnd_display+0x6e>
 		case 3:
-			#if 0
+			#if 1
 			FND_DIGIT_PORT = 0b00010000; // anode
+ 13c:	80 e1       	ldi	r24, 0x10	; 16
+ 13e:	88 bb       	out	0x18, r24	; 24
 			#else
 			FND_DIGIT_PORT = ~0b00010000; // cathode
- 13c:	8f ee       	ldi	r24, 0xEF	; 239
- 13e:	88 bb       	out	0x18, r24	; 24
 			#endif
 			FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
  140:	89 85       	ldd	r24, Y+9	; 0x09
@@ -275,8 +273,8 @@ void fnd_display(void){
 		break;
 	}
 	digit_position++;
- 144:	80 91 0a 01 	lds	r24, 0x010A	; 0x80010a <__data_end>
- 148:	90 91 0b 01 	lds	r25, 0x010B	; 0x80010b <__data_end+0x1>
+ 144:	80 91 0c 01 	lds	r24, 0x010C	; 0x80010c <__data_end>
+ 148:	90 91 0d 01 	lds	r25, 0x010D	; 0x80010d <__data_end+0x1>
  14c:	01 96       	adiw	r24, 0x01	; 1
 	digit_position %= 4; // 다음 표시할 자리수를 준비하고 함수 종료
  14e:	83 70       	andi	r24, 0x03	; 3
@@ -287,10 +285,10 @@ void fnd_display(void){
  158:	8c 6f       	ori	r24, 0xFC	; 252
  15a:	9f 6f       	ori	r25, 0xFF	; 255
  15c:	01 96       	adiw	r24, 0x01	; 1
- 15e:	90 93 0b 01 	sts	0x010B, r25	; 0x80010b <__data_end+0x1>
- 162:	80 93 0a 01 	sts	0x010A, r24	; 0x80010a <__data_end>
+ 15e:	90 93 0d 01 	sts	0x010D, r25	; 0x80010d <__data_end+0x1>
+ 162:	80 93 0c 01 	sts	0x010C, r24	; 0x80010c <__data_end>
 }
- 166:	2a 96       	adiw	r28, 0x0a	; 10
+ 166:	2b 96       	adiw	r28, 0x0b	; 11
  168:	0f b6       	in	r0, 0x3f	; 63
  16a:	f8 94       	cli
  16c:	de bf       	out	0x3e, r29	; 62
