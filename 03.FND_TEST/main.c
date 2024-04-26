@@ -19,6 +19,7 @@
 #define FND_DIGIT_D4 7 //자리수4번 D4설정 7로
 
 void init_fnd(void);
+void fnd_display(void);
 
 int main(void)
 {
@@ -28,6 +29,8 @@ int main(void)
     /* Replace with your application code */
     while (1) 
     {
+		fnd_display();
+		_delay_ms(1); //1ms마다 fnd_display함수 호출
     }
 }
 
@@ -36,7 +39,7 @@ void init_fnd(void){
 	FND_DATA_DDR = 0xFF;
 	FND_DIGIT_DDR |= 0xF0;// 4,5,6,7만 출력이니까 거기만 write모드
 	
-	#if 1 //common anode방식으로
+	#if 0 //common anode방식으로
 		FND_DATA_PORT = ~0x00; // common anode : FND를 all off
 	#else	// common cathode
 		FND_DATA_PORT = 0x00; // PORTC 설정 : FND를 all off
@@ -47,16 +50,59 @@ void init_fnd(void){
 // display the FND
 void fnd_display(void){
 	
-	#if 1 // common anode
+	#if 0 // common anode
 		// 0을 찍을려면 g빼고 1로 16진수값 3F입니다, b는 0011_1111(common anode)
 		// common cathode는 1100_0000이고, 16진수로 C0
-		unsigned char fnd_font[][] = {
-			
+		unsigned char fnd_font[] = {
+			// 0    1     2     3    4    5    6    7    8    9
+			0xC0, 0xF9, 0xA4, 0xB0, 0x99, 0x92, 0x82, 0xD8, 0x80, 0x98
 		};
 	#else
-		
-	
+		unsigned char fnd_font[] = {
+			// 0    1     2     3    4    5    6    7    8    9
+			~0xC0, ~0xF9, ~0xA4, ~0xB0, ~0x99, ~0x92, ~0x82, ~0xD8, ~0x80, ~0x98
+		};		
 	#endif
 	
+	static int digit_position = 0; // 자리수 선택 변수 0~3 : 0,1,2,3
+		
+	switch(digit_position){
+		case 0:
+			#if 0
+				FND_DIGIT_PORT = 0b10000000; // anode
+			#else 
+				FND_DIGIT_PORT = ~0b10000000; // cathode
+			#endif
+				FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
+			break;
+		case 1:
+			#if 0
+			FND_DIGIT_PORT = 0b10000000; // anode
+			#else
+			FND_DIGIT_PORT = ~0b10000000; // cathode
+			#endif
+			FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
+			break;
+		case 2:
+			#if 0
+			FND_DIGIT_PORT = 0b00100000; // anode
+			#else
+			FND_DIGIT_PORT = ~0b00100000; // cathode
+			#endif
+			FND_DATA_PORT = fnd_font[8];// 8번 index write = 9을 사용함
+			break;
+		case 3:
+			#if 0
+			FND_DIGIT_PORT = 0b00010000; // anode
+			#else
+			FND_DIGIT_PORT = ~0b00010000; // cathode
+			#endif
+			FND_DATA_PORT = fnd_font[8]; // 8번 index write = 9을 사용함
+			break;
+		default:
+		break;
+	}
+	digit_position++;
+	digit_position %= 4; // 다음 표시할 자리수를 준비하고 함수 종료
 }
 
