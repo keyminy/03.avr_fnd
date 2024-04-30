@@ -4,39 +4,49 @@
  * Created: 2024-04-26 오전 10:40:58
  * Author : HARMAN-27
  */ 
-#include "globals.h"
+
+#include <stdbool.h>
+//#include "extern.h"
 #include "fnd.h"
 #include "button.h"
 
-extern void fnd_display(void);
+extern void fnd_display(int d4,int d3,int d2,int d1);
 extern void init_fnd(void);
 
-//unsigned int ms_count = 0; // unsigned int 길어요
-uint32_t ms_count = 0; // ms를 재는 변수이다
+uint32_t ms_count = 0; 
 uint32_t sec_count = 0;
 
 int main(void)
 {
+	bool state = false;
 	// initialize state
 	init_fnd();
-	
+
+		
     /* Replace with your application code */
     while (1) 
     {
-		fnd_display();
-		_delay_ms(100); //1ms마다 fnd_display함수 호출
-		ms_count++;
-		if(ms_count == 1000){
-			//1000ms = 1s
-			ms_count = 0;
-			sec_count++; // sec count를 증가시킴
-		}
-		if(get_button(BUTTON1_PIN,BUTTON1)){
-			while(1){
-				if(get_button(BUTTON1_PIN,BUTTON1)){
-					break;
-				}
+		if(!state){
+
+		}else{
+			ms_count++;
+			if(ms_count >= 1000){
+				//1000ms = 1s
+				ms_count = 0;
+				sec_count++; // sec count를 증가시킴
 			}
+			fnd_display(
+				sec_count/10%10, //d4
+				sec_count%10, //d3
+				ms_count/100%100, //d2
+				ms_count/10%10 //d1
+			);
+			_delay_ms(4);
 		}
+				
+		if(get_button(BUTTON1_PIN,BUTTON1)){
+			state = !state;
+		}
+
 	}
 }

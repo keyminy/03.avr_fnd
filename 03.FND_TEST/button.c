@@ -1,4 +1,7 @@
-﻿#include "button.h"
+﻿#define F_CPU 16000000UL
+#include <avr/io.h> // PORTA DDRA 등의 symbom이 정의 되어 있다.
+#include <util/delay.h> // _delay_ms 등의 함수가 들어있다.
+#include "button.h"
 
 // 채터링제거를 위한 flag변수(각각의 버튼에 대한 정보를 담는 table)
 // 지금은 전역변수로 선언했지만 싫다면, static변수로 만들어줘도됨

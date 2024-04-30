@@ -128,13 +128,13 @@
     <Compile Include="button.h">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="extern.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="fnd.c">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="fnd.h">
-      <SubType>compile</SubType>
-    </Compile>
-    <Compile Include="globals.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="main.c">

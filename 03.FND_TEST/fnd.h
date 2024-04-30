@@ -1,14 +1,9 @@
 ﻿#ifndef FND_H_
-
 #define FND_H_
 
+#define F_CPU 16000000UL
 #include <avr/io.h> // PORTA DDRA 등의 symbom이 정의 되어 있다.
 #include <util/delay.h> // _delay_ms 등의 함수가 들어있다.
-
-typedef enum stopwatch_state {
-	STOPPED, RUNNING, RESET
-} t_stopwatch_state;
-
 
 #define FND_DATA_DDR DDRC //PortC
 #define FND_DATA_PORT PORTC //data Port
@@ -21,6 +16,8 @@ typedef enum stopwatch_state {
 #define FND_DIGIT_D4 7 //자리수4번 D4설정 7로
 
 void init_fnd(void);
-void fnd_display(void);
+void fnd_display(int d4,int d3,int d2,int d1);
+void fnd_stop_display(void);
+int stop_logic(int digit_position);
 
 #endif 
