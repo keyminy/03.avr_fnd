@@ -16,7 +16,7 @@
 #define FND_DIGIT_D4 7 //자리수4번 D4설정 7로
 
 void init_fnd(void);
-void fnd_display(int d4,int d3,int d2,int d1);
+void fnd_display();
 void fnd_stop_display(void);
 int stop_logic(int digit_position);
 
