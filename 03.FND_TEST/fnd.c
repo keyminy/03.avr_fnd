@@ -55,7 +55,7 @@ void fnd_display(bool dot1_state){
 	digit_position %= 4; // 다음 표시할 자리수를 준비하고 함수 종료
 }
 
-void fnd_stop_display(bool dot1_state){
+void fnd_stop_display(bool btn1_state,bool dot1_state){
 	static int digit_position = 0; // 자리수 선택  변수 0~3 : 0,1,2,3
 	static int dp1 = 0x00;
 	
@@ -63,30 +63,38 @@ void fnd_stop_display(bool dot1_state){
 		
 	if(dot1_state){
 		dp1 = fnd_font[10];
-		}else {
-		dp1 = 0x00;
+	}else {
+		dp1= 0x00;
 	}
+		
 	switch(digit_position){
 		case 0:
 		FND_DIGIT_PORT = ~0b10000000; // cathode
-		// sec_count % 10 = 0~9까지 빙글빙글
-		//FND_DATA_PORT = stop_logic(digit_position);
-		FND_DATA_PORT = fnd_font[ms_count/10%10];
+		if(!btn1_state)
+			FND_DATA_PORT = stop_logic(digit_position);
+		else
+			FND_DATA_PORT = fnd_font[ms_count/10%10];
 		break;
 		case 1:
 		FND_DIGIT_PORT = ~0b01000000; // cathode
-		//FND_DATA_PORT = stop_logic(digit_position);
-		FND_DATA_PORT =fnd_font[ms_count/100%100] | dp1;
+		if(!btn1_state)
+			FND_DATA_PORT = stop_logic(digit_position);
+		else
+			FND_DATA_PORT =fnd_font[ms_count/100%100] | dp1;
 		break;
 		case 2:
 		FND_DIGIT_PORT = ~0b00100000; // cathode
-		//FND_DATA_PORT = stop_logic(digit_position);
-		FND_DATA_PORT = fnd_font[sec_count%10];
+		if(!btn1_state)
+			FND_DATA_PORT = stop_logic(digit_position);
+		else
+			FND_DATA_PORT = fnd_font[sec_count%10];
 		break;
 		case 3:
 		FND_DIGIT_PORT = ~0b00010000; // cathode
-		//FND_DATA_PORT = stop_logic(digit_position);
-		FND_DATA_PORT = fnd_font[sec_count/10%6];
+		if(!btn1_state)
+			FND_DATA_PORT = stop_logic(digit_position);
+		else
+			FND_DATA_PORT = fnd_font[sec_count/10%6];
 		break;
 	}
 	digit_position++;
@@ -94,14 +102,52 @@ void fnd_stop_display(bool dot1_state){
 }
 
 int stop_logic(int digit_position){
-	unsigned char fnd_font[] = {~0xc0, ~0xf9, ~0xa4, ~0xb0,~0x99,~0x92,~0x82,~0xd8,~0x80,~0x98,~0x7f};
-	//static변수는 자료형에 따라 자동으로 초기화된다고 한다,그러므로 int는 0
-	//ms_cnt를 대신할 변수이다.
-	// TODO
-	//static int ms = 0;
+	static  int  ms;
+	static int turn; // Determine how many cycles it is.
+	static int circle;
+	//Specifies the characters to cycle through.
+	unsigned char fnd_font[10]={~0xfe,~0xfe,~0xfe,~0xfe,~0xcf,~0xf7,~0xf7,~0xf7,~0xf7,~0xf9};
+	// Note : Currently, If you look at fnd_font value, it will rotate counterclockwise!.
+	unsigned char fnd_index[10]={0,1,2,3,3,3,2,1,0,0};
 	
+	if(ms == 100){
+		ms %= 100;
+		turn++;
+	}
+	if(turn == 10){
+		circle++;
+		turn %= 10;
+	}
 	
-	//ms_count = 0;
-	//sec_count = 0;
-	return 0xff;
+	switch(circle){
+		case 0:
+		ms++;
+		//fnd counterclockwise
+		if(digit_position == fnd_index[turn]){
+			return fnd_font[turn];
+		}
+		break;
+		case 1:
+		//fnd all off
+		ms++;
+		return 0x00;
+		break;
+		case 2:
+		//fnd clockwise
+		if(digit_position == fnd_index[9-turn]){
+			return fnd_font[9-turn];
+		}
+		ms++;
+		break;
+		case 3:
+		//fnd all off
+		ms++;
+		return 0x00;
+		break;
+		default:
+		ms++;
+		circle = 0;
+		break;
+	}
+	return 0x00;
 }

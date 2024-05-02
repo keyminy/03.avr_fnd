@@ -17,7 +17,8 @@
 
 void init_fnd(void);
 void fnd_display(bool dot1_state);
-void fnd_stop_display(bool dot1_state);
-int stop_logic(int digit_position);
+void fnd_stop_display(bool btn1_state,bool dot1_state);
+int stop_logic();
+void fnd_idle(void);
 
 #endif 
